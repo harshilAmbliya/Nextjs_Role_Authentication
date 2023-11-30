@@ -29,9 +29,10 @@ const LoginForm = () => {
 
             if (data) {
                 toast.success(data?.message);
-                // localStorage.setItem("authorizationToken", data?.token);
                 Cookies.set("authorizationToken", data?.token)
                 router.push("/")
+            } else {
+                throw new Error('Error')
             }
         } catch (error) {
             console.log(error);

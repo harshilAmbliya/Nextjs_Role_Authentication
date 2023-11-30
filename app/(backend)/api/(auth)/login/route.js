@@ -3,10 +3,11 @@ import User from "@/models/userModel";
 import { NextResponse } from "next/server"
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken";
+import Cookies from "js-cookie";
 
 
 connectDb();
-export const POST = async (req) => {
+export const POST = async (req, res) => {
 
     const data = await req.json();
 
@@ -30,10 +31,11 @@ export const POST = async (req) => {
     }
 
     const token = jwt.sign({ userId: user._id }, process.env.NEXTJS_SECRET, {
-        expiresIn: "1d"
-    })
+        expiresIn: "1d",
+    });
 
     return NextResponse.json({ token, message: "user login successfully", status: true, error: null }, { status: 200 })
+
 
 
 }
