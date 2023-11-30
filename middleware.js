@@ -1,36 +1,40 @@
-
-import Cookies from 'js-cookie';
-import { NextResponse } from 'next/server'
-// import getToken from './libs/getToken';
-
-
-// This function can be marked `async` if using `await` inside
-const token = ''
+import { NextResponse } from 'next/server';
 
 export function middleware(request) {
+    const path = request.nextUrl?.pathname || '';
 
-
-
-
-    const path = request.url.pathname;
-    const isPublicPath = ['/', 'login', 'register']
+    const isPublicPath = ['/login', '/register'];
 
     if (!isPublicPath.includes(path)) {
+        const token = request.cookies.get("authorizationToken")?.value || "";
 
-        const token = Cookies.set("authorizationToken")
         if (!token) {
-            return NextResponse.redirect(new URL('/login', request.nextUrl));
+
+            return NextResponse.rewrite(new URL('/login', request.url));
         } else {
-            return NextResponse.redirect(new URL('/', request.nextUrl));
+
+            return NextResponse.rewrite(new URL('/', request.url))
         }
     }
-
+    const response = NextResponse.next({
+        request: {
+            // New request headers
+            headers: request.headers,
+        },
+    })
     // If the path is in the public paths, continue with the request
-    return request.next();
-
+    return response
 }
-
 
 export const config = {
-    matcher: ['/', '/login', '/register'],
-}
+    matcher: [
+        /*
+         * Match all request paths except for the ones starting with:
+         * - api (API routes)
+         * - _next/static (static files)
+         * - _next/image (image optimization files)
+         * - favicon.ico (favicon file)
+         */
+        '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    ],
+};
