@@ -2,19 +2,25 @@ import { NextResponse } from 'next/server';
 
 export function middleware(request) {
     const path = request.nextUrl?.pathname || '';
-
+    const token = request.cookies.get("authorizationToken")?.value || "";
     const isPublicPath = ['/login', '/register'];
 
+    if (token && isPublicPath.includes(path)) {
+        return NextResponse.redirect(new URL('/', request.url))
+    }
+
     if (!isPublicPath.includes(path)) {
-        const token = request.cookies.get("authorizationToken")?.value || "";
+
 
         if (!token) {
 
             return NextResponse.rewrite(new URL('/login', request.url));
-        } else {
-
-            return NextResponse.rewrite(new URL('/', request.url))
         }
+
+
+
+        return NextResponse.rewrite(new URL('/', request.url))
+
     }
     const response = NextResponse.next({
         request: {
