@@ -5,6 +5,7 @@ import BootstrapProvider from '@/helpers/BootstrapProvider';
 const inter = Inter({ subsets: ['latin'] })
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import UserContextProvider from '@/context/userContext';
 
 
 export const metadata = {
@@ -18,8 +19,10 @@ export default function RootLayout({ children }) {
 
       <body className={inter.className}>
         <BootstrapProvider>
-          <ToastContainer />
-          {children}
+          <UserContextProvider>
+            <ToastContainer />
+            {children}
+          </UserContextProvider>
         </BootstrapProvider>
       </body>
 
